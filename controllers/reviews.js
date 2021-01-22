@@ -5,7 +5,7 @@ module.exports.createReview = async(req, res) => {
     const campground = await Campground.findById(req.params.id);
     const review = new Review(req.body.review);
     review.author = req.user._id;
-    campground.reviews.push(review);
+    campground.reviews.push(review);  //push is used to append the review rather than replacing others.
     await review.save();
     await campground.save();
     req.flash('success', 'Created new review!');

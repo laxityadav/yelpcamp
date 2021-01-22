@@ -5,8 +5,8 @@ const geocoder = mbxGeocoding({ accessToken: mapBoxToken});
 const { cloudinary } = require('../cloudinary');
 
 module.exports.index = async (req, res) => {
-    const campground = await Campground.find({}).populate('popupText');
-    res.render('campgrounds/index', {campground});
+    const campground = await Campground.find({}).populate('popupText');//populate will append the whole popup text to a
+    res.render('campgrounds/index', {campground});    //campground because in campground we are storing just the objectId's.
 };
 
 module.exports.renderNewForm = (req, res) => {
@@ -15,13 +15,13 @@ module.exports.renderNewForm = (req, res) => {
 
 module.exports.createCampground = async(req, res) => {
     const geoData = await geocoder.forwardGeocode({
-        query: req.body.campground.location,
+        query: req.body.campground.location,   //used to set the location in a map.
         limit: 1
     }).send()
     const campground = new Campground(req.body.campground);
     campground.geometry = geoData.body.features[0].geometry;
-    campground.images = req.files.map(f => ({ url: f.path, filename: f.filename }));
-    campground.author = req.user._id;
+    campground.images = req.files.map(f => ({ url: f.path, filename: f.filename }));//used to set multiple images in campground.
+    campground.author = req.user._id;                       //we are storing the userId coming through passport(from sessionId).
     await campground.save();
     req.flash('success', 'Successfully made a new campground!');
     res.redirect(`campgrounds/${campground._id}`);
@@ -56,8 +56,8 @@ module.exports.updateCampground = async(req, res) => {
         query: req.body.campground.location,
         limit: 1
     }).send()
-    const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground });
-    campground.geometry = geoData.body.features[0].geometry;
+    const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground });//req.body.campground returns an object and 
+    campground.geometry = geoData.body.features[0].geometry;               //'...' is used to spread the properties of the object.
     const imgs = req.files.map(f => ({ url: f.path, filename: f.filename }));
     campground.images.push(...imgs);
     await campground.save();

@@ -9,11 +9,11 @@ module.exports.register = async (req, res, next) => {
         const { email, username, password } = req.body;
         const user = new User({ email, username });
         const registeredUser = await User.register(user, password);
-        req.login(registeredUser, err=> {
-            if(err) return next(err);
+        req.login(registeredUser, err=> {                 //if a user is registering then after registration we will redirect 
+            if(err) return next(err);                     //user not to login page but directly login the user.
             req.flash('success', 'Welcome to Yelp Camp!');
-            res.redirect('/campgrounds');
-        })
+            res.redirect('/campgrounds');      //we can redirect user directly to campgrounds but we used login function 
+        })                                     //to create the sessionId and this is done using login function of passport.
     } catch(err) {
         req.flash('error', err.message);
         res.redirect('register');

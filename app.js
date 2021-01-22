@@ -1,5 +1,5 @@
 if (process.env.NODE_ENV !== "production") {
-    require('dotenv').config();
+    require('dotenv').config();          //if we are in production then we will not use dotenv file
 }
 
 const express = require('express');
@@ -41,8 +41,8 @@ app.engine('ejs', ejsMate)
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'))
 
-app.use(express.urlencoded({ extended: true }));
-app.use(methodOverride('_method'));
+app.use(express.urlencoded({ extended: true }));  //method to get values from incoming request.
+app.use(methodOverride('_method'));      //to use put, delete and patch request with get and post.
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(mongoSanitize({
     replaceWith: '_'
@@ -79,12 +79,12 @@ app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
 
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+passport.serializeUser(User.serializeUser());   //use for login and logout of a user using the
+passport.deserializeUser(User.deserializeUser()); //cookies and session id.
 
 app.use((req, res, next) => {
-    res.locals.currentUser = req.user;
-    res.locals.success = req.flash('success');
+    res.locals.currentUser = req.user; // locals has wide scope to all over the application
+    res.locals.success = req.flash('success'); //so direct names can be used to access them.
     res.locals.error = req.flash('error');
     next();
 });
@@ -102,8 +102,8 @@ app.all('*', (req, res, next) => {          //If no request above is matched the
     next(new ExpressError('Page Not Found, 400'));    
 });
 
-app.use((err, req, res, next) => {
-    const { statusCode=500 } = err;
+app.use((err, req, res, next) => {  //if we get any error then this function is used to catch 
+    const { statusCode=500 } = err;  //the error and handel it.
     if(!err.message) err.message = 'Something went wrong!';
     res.status(statusCode).render('error', { err });
 });
